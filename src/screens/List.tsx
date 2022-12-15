@@ -1,6 +1,5 @@
-import { Text, View, VStack } from 'native-base'
-import { useContext } from 'react'
-import Animated from 'react-native-reanimated'
+import { FlatList, Text, View, VStack } from 'native-base'
+import { useContext, useState } from 'react'
 import { scrollYContext } from '../context/scrollY'
 
 const lista = [
@@ -43,24 +42,34 @@ const lista = [
 ]
 
 export function List() {
-  const { scrollY } = useContext(scrollYContext)
+  const { setDirection } = useContext(scrollYContext)
+  const [offset, setOffset] = useState(0)
+
   return (
     <View h="full" bg="white">
-      <Animated.FlatList
-        onScroll={Animated.event([
-          {
-            nativeEvent: {
-              contentOffset: { y: scrollY }
-            }
-          }
-        ])}
+      <FlatList
+        onScroll={e => {
+          const currentOffset = e.nativeEvent.contentOffset.y
+          const direction = currentOffset > offset ? 'down' : 'up'
+          setOffset(currentOffset)
+          setDirection(direction)
+        }}
+        bounces={false}
         showsVerticalScrollIndicator={false}
         keyExtractor={item => item.id}
         scrollEventThrottle={16}
         style={{ paddingHorizontal: 24 }}
         data={lista}
         renderItem={({ item }) =>
-          <VStack space="2" my={4} p={4} bg="cyan.700" rounded="lg" shadow="5">
+          <VStack
+            space="2"
+            h={'40'}
+            my={4}
+            p={4}
+            bg="cyan.700"
+            rounded="lg"
+            shadow="5"
+          >
             <Text color="white">
               {item.id}
             </Text>

@@ -1,37 +1,33 @@
 import { IconButton, Text } from 'native-base'
 import { MaterialIcons } from '@expo/vector-icons'
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
-import { MotiView, SafeAreaView } from 'moti'
+import { MotiSafeAreaView } from 'moti'
 import { scrollYContext } from '../context/scrollY'
-import { useContext } from 'react'
-import Animated from 'react-native-reanimated'
+import { Fragment, useContext } from 'react'
 
 type HeaderProps = NativeStackHeaderProps
 
 export function Header({ navigation, back, ...rest }: HeaderProps) {
   const showGoBackButton = !!back
   const routeTitle = rest.options.title
-  const { scrollY } = useContext(scrollYContext)
+  const { direction } = useContext(scrollYContext)
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: 'white'
-      }}
-    >
-      <Animated.View
+    <Fragment>
+      <MotiSafeAreaView
+        from={{
+          height: direction === 'down' ? 0 : 100
+        }}
+        transition={{
+          type: 'timing'
+        }}
         style={{
-          height: scrollY.interpolate({
-            inputRange: [10, 160, 186],
-            outputRange: [60, 20, 0],
-            extrapolate: 'clamp'
-          }),
-          opacity: scrollY.interpolate({
-            inputRange: [1, 75, 186],
-            outputRange: [1, 1, 0],
-            extrapolate: 'clamp'
-          }),
           width: '100%',
           backgroundColor: 'white',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 2,
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center'
@@ -47,7 +43,7 @@ export function Header({ navigation, back, ...rest }: HeaderProps) {
           {routeTitle}
         </Text>
         <IconButton disabled zIndex={-1} opacity={0} size="md" />
-      </Animated.View>
-    </SafeAreaView>
+      </MotiSafeAreaView>
+    </Fragment>
   )
 }
